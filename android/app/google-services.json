@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "327978047787",
+    "project_id": "tourist-app-6bf3d",
+    "storage_bucket": "tourist-app-6bf3d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327978047787:android:efe5a55b0fa154a82a4d6e",
+        "android_client_info": {
+          "package_name": "com.example.algeria_tour_v3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvfOADAFuwDHtnjETZs1PO0tDtT2wDuo8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
