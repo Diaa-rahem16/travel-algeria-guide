@@ -6,6 +6,7 @@ import 'package:algerian_touristic_guide_app/services/database.dart';
 //import 'package:algerian_touristic_guide_app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class PlaceDetail extends StatefulWidget {
   final Place place;
@@ -22,16 +23,11 @@ class _PlaceDetailState extends State<PlaceDetail> {
   String likes = "0";
 
   void _showReviewPanel(place) {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-            color: Colors.grey[200],
-            child: ReviewSection(place: place),
-          );
-        });
+    Get.bottomSheet(Container(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+      color: Colors.grey[200],
+      child: ReviewSection(place: place),
+    ));
   }
 
   @override
@@ -71,7 +67,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                       borderRadius: BorderRadius.circular(20),
                       child: SizedBox.fromSize(
                         size: const Size.fromRadius(48),
-                        child: Image.asset(
+                        child: Image.network(
                           widget.place.imagePath!,
                           fit: BoxFit.cover,
                           height: 300.0,
@@ -170,6 +166,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                                 ),
                               ),
                               onPressed: () {
+                                print('object');
                                 return _showReviewPanel(widget.place);
                               },
                             ),

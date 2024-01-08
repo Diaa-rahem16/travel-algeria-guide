@@ -35,7 +35,7 @@ class RecomandedCard extends StatelessWidget {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     image: DecorationImage(
-                        image: AssetImage(image), fit: BoxFit.cover)),
+                        image: NetworkImage(image), fit: BoxFit.cover)),
               ),
               Text(
                 name,
@@ -52,7 +52,7 @@ class RecomandedCard extends StatelessWidget {
                   ),
                   Icon(
                     Icons.location_on,
-                    color: kPrimearyClr,
+                    color: kSecondaryClr,
                   ),
                   Text(
                     state,

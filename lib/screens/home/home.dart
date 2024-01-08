@@ -1,11 +1,19 @@
 //import 'package:algerian_touristic_guide_app/models/place.dart';
+import 'package:algerian_touristic_guide_app/models/user.dart';
 import 'package:algerian_touristic_guide_app/screens/home/place_list.dart';
 import 'package:algerian_touristic_guide_app/screens/home/profile_update.dart';
+import 'package:algerian_touristic_guide_app/screens/home/widgets/FormPlace.dart';
 //import 'package:algerian_touristic_guide_app/screens/home/place_tile.dart';
 import 'package:algerian_touristic_guide_app/services/auth.dart';
 import 'package:algerian_touristic_guide_app/utilities/colors.dart';
 import 'package:flutter/material.dart';
 //import 'package:provider/provider.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+
+final _formKeyName = GlobalKey<FormState>();
+String? fullName;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,13 +29,15 @@ class _HomeState extends State<Home> {
   int currentPageIndex = 0;
   //bool loading = false;
   @override
+  @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AppUser?>(context);
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize:
-              Size.fromHeight(80.0), // here you can set the desired height
+          preferredSize: const Size.fromHeight(
+              80.0), // here you can set the desired height
           child: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: kPrimearyClr,
             elevation: 2.0,
             flexibleSpace: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -36,28 +46,31 @@ class _HomeState extends State<Home> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage:
-                                AssetImage("assets/images/deserts.jpeg"),
+                          const SizedBox(
+                            width: 10,
                           ),
-                          SizedBox(
+                          const CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(
+                                "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"),
+                          ),
+                          const SizedBox(
                             width: 15,
                           ),
                           RichText(
                               text: TextSpan(
                                   text: "Hello",
                                   style: TextStyle(
-                                      color: Colors.black, fontSize: 18),
+                                      color: Colors.grey[200], fontSize: 18),
                                   children: [
                                 TextSpan(
-                                  text: ",Diaa",
-                                  style: TextStyle(
+                                  text: ", " " ${user!.fullName}",
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
                                 )
@@ -70,17 +83,24 @@ class _HomeState extends State<Home> {
               ],
             ),
             actions: <Widget>[
-              TextButton.icon(
-                icon: const Icon(Icons.logout),
-                label: const Text('Log out'),
-                onPressed: () async {
-                  //loading = true;
-                  await _auth.signOut();
-                },
-                style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(248, 180, 8, 8)),
-                ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Log out'),
+                    onPressed: () async {
+                      //loading = true;
+                      await _auth.signOut();
+                    },
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(kBgClr),
+                    ),
+                  ),
+                ],
               ),
             ],
           )),
@@ -108,12 +128,18 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.person_outline),
             label: 'profile',
           ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.add),
+            icon: Icon(Icons.add),
+            label: 'add place',
+          ),
         ],
       ),
       body: <Widget>[
         SingleChildScrollView(child: const PlaceList(isBookmarkedPage: false)),
         SingleChildScrollView(child: const PlaceList(isBookmarkedPage: true)),
         SingleChildScrollView(child: const ProfileUpdate()),
+        SingleChildScrollView(child: FormPlace()),
       ][currentPageIndex],
     );
   }

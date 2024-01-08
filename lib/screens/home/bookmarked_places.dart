@@ -1,12 +1,15 @@
 import 'package:algerian_touristic_guide_app/models/place_user.dart';
 import 'package:algerian_touristic_guide_app/models/user.dart';
 import 'package:algerian_touristic_guide_app/screens/home/place_detail.dart';
-import 'package:algerian_touristic_guide_app/models/place.dart';
-import 'package:algerian_touristic_guide_app/shared/constants.dart';
+import 'package:algerian_touristic_guide_app/screens/home/widgets/category_card.dart';
+import 'package:algerian_touristic_guide_app/screens/home/widgets/recomanded_card.dart';
+import 'package:algerian_touristic_guide_app/utilities/colors.dart';
 //import 'package:algerian_touristic_guide_app/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_searchable_dropdown/flutter_searchable_dropdown.dart';
 //import 'place_list.dart';
 import 'package:provider/provider.dart';
+import 'package:algerian_touristic_guide_app/models/place.dart';
 
 class BookmarkedPlaces extends StatefulWidget {
   const BookmarkedPlaces({super.key});
@@ -74,237 +77,210 @@ class _ListTileState extends State<BookmarkedPlaces> {
       return true;
     }).toList();
 
-    return Column(
-      children: [
-        const SizedBox(height: 20.0),
+    return SafeArea(
+      child: Expanded(
+        child: Container(
+          padding: EdgeInsets.only(left: 15, right: 15),
+          color: kBgClr,
+          child: Column(
+            children: [
+              const SizedBox(height: 20.0),
 
-        Container(
-          //width: 280.0,
-          padding: const EdgeInsets.fromLTRB(25.0, 0.0, 25.0, 0.0),
-          child: DropdownButtonFormField<String?>(
-            value: selectedState ?? 'All',
-            decoration: textInputDecoration,
-            hint: const Text("Select a wilaya"),
-            onChanged: (val) => setState(() {
-              selectedState = val;
-            }),
-            items: [
-              const DropdownMenuItem(
-                value: 'All',
-                child: Text('All'),
+              Material(
+                borderRadius: BorderRadius.circular(50),
+                elevation: 5,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Center(
+                      child: SearchableDropdown.single(
+                        items: states.map((state) {
+                          return DropdownMenuItem(
+                            value: state,
+                            child: Text(state ?? ''),
+                          );
+                        }).toList(),
+                        value: selectedState,
+                        hint: "Select a wilaya",
+                        searchHint: "Select a wilaya",
+                        onChanged: (value) {
+                          setState(() {
+                            selectedState = value;
+                          });
+                        },
+                        isExpanded: true,
+                        closeButton: "Close",
+                        onClear: () {
+                          setState(() {
+                            selectedState = "All";
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              ...states.map((state) {
-                return DropdownMenuItem(
-                  value: state,
-                  child: Text(state ?? ''),
-                );
-              }).toList(),
+              const SizedBox(height: 10.0),
+              // Category Filters
+              Row(
+                children: [
+                  Container(
+                    child: Text("Category",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 26)),
+                  ),
+                ],
+              ),
+              Container(
+                height: 120,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    Row(
+                      children: [
+                        CategoryCard(
+                            isClicked: isFilterMuseum,
+                            press: () => setState(() {
+                                  if (!isFilterMuseum) {
+                                    selectedCategories.add("museum");
+                                    isFilterMuseum = true;
+                                  } else {
+                                    if (selectedCategories.contains("museum")) {
+                                      selectedCategories.remove("museum");
+                                    }
+                                    isFilterMuseum = false;
+                                  }
+                                }),
+                            title: "Mueseum",
+                            image: "assets/constantine/ConM1.jpg"),
+                        CategoryCard(
+                            isClicked: isFilterRestAndCafe,
+                            press: () => setState(() {
+                                  if (!isFilterRestAndCafe) {
+                                    selectedCategories.add("restaurant_coffee");
+                                    isFilterRestAndCafe = true;
+                                    //print("$selectedCategories | $isFilterMuseum");
+                                  } else {
+                                    selectedCategories
+                                        .remove("restaurant_coffee");
+                                    isFilterRestAndCafe = false;
+                                    //print("$selectedCategories | $isFilterMuseum");
+                                  }
+                                }),
+                            title: "restaurant coffee",
+                            image: "assets/constantine/ConH1.jpg"),
+                        CategoryCard(
+                            isClicked: isFilterHistoricalPlaces,
+                            press: () => setState(() {
+                                  if (!isFilterHistoricalPlaces) {
+                                    selectedCategories.add("historical_place");
+                                    isFilterHistoricalPlaces = true;
+                                    //print("$selectedCategories | $isFilterMuseum");
+                                  } else {
+                                    selectedCategories
+                                        .remove("historical_place");
+                                    isFilterHistoricalPlaces = false;
+                                    //print("$selectedCategories | $isFilterMuseum");
+                                  }
+                                }),
+                            title: "historical place",
+                            image: "assets/constantine/ConR1.jpg"),
+                        CategoryCard(
+                            isClicked: isFilterOthers,
+                            title: "Other placses",
+                            image: "image",
+                            press: () => setState(() {
+                                  if (!isFilterOthers) {
+                                    selectedCategories.add("others");
+                                    isFilterOthers = true;
+                                    //print("$selectedCategories | $isFilterMuseum");
+                                  } else {
+                                    selectedCategories.remove("others");
+                                    isFilterOthers = false;
+                                    //print("$selectedCategories | $isFilterMuseum");
+                                  }
+                                }))
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0),
+
+              Container(
+                child: bookmarkedPlaces.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "No places were bookmarked yet.",
+                            style: TextStyle(
+                              fontSize: 13.0,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      )
+                    : Column(
+                        children: [
+                          SizedBox(height: 10.0),
+                          Row(
+                            children: [
+                              Text("Bookmarked places",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 26))
+                            ],
+                          ),
+                          Container(
+                              height: 280,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20)),
+                              padding: const EdgeInsets.only(left: 15),
+                              child: ListView.builder(
+                                  itemCount: bookmarkedPlaces.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 15),
+                                      child: (Row(
+                                        children: [
+                                          RecomandedCard(
+                                            image: bookmarkedPlaces[index]
+                                                    .imagePath ??
+                                                '',
+                                            name:
+                                                bookmarkedPlaces[index].name ??
+                                                    '',
+                                            state:
+                                                bookmarkedPlaces[index].state ??
+                                                    '',
+                                            press: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PlaceDetail(
+                                                            place:
+                                                                bookmarkedPlaces[
+                                                                    index])),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      )),
+                                    );
+                                  })),
+                        ],
+                      ),
+              ),
             ],
           ),
         ),
-        const SizedBox(height: 10.0),
-        // Category Filters
-        Row(
-          children: [
-            const SizedBox(width: 16.0),
-            Expanded(
-              child: Card(
-                margin: const EdgeInsets.all(8.0),
-                color: Colors.grey[300],
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  title: const Text(
-                    "Museums",
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  selectedTileColor: Colors.green[300],
-                  selected: isFilterMuseum,
-                  onTap: () => setState(() {
-                    if (!isFilterMuseum) {
-                      selectedCategories.add("museum");
-                      isFilterMuseum = true;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    } else {
-                      selectedCategories.remove("museum");
-                      isFilterMuseum = false;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    }
-                  }),
-                ),
-              ),
-            ),
-            //const SizedBox(width: 10.0),
-            Expanded(
-              child: Card(
-                margin: const EdgeInsets.all(8.0),
-                color: Colors.grey[300],
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  title: const Text(
-                    "Food and Coffee",
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  selectedTileColor: Colors.green[300],
-                  selected: isFilterRestAndCafe,
-                  onTap: () => setState(() {
-                    if (!isFilterRestAndCafe) {
-                      selectedCategories.add("restaurant_coffee");
-                      isFilterRestAndCafe = true;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    } else {
-                      selectedCategories.remove("restaurant_coffee");
-                      isFilterRestAndCafe = false;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    }
-                  }),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Card(
-                margin: const EdgeInsets.all(8.0),
-                color: Colors.grey[300],
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  title: const Text(
-                    "Historical Places",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  selectedTileColor: Colors.green[300],
-                  selected: isFilterHistoricalPlaces,
-                  onTap: () => setState(() {
-                    if (!isFilterHistoricalPlaces) {
-                      selectedCategories.add("historical_place");
-                      isFilterHistoricalPlaces = true;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    } else {
-                      selectedCategories.remove("historical_place");
-                      isFilterHistoricalPlaces = false;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    }
-                  }),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Card(
-                margin: const EdgeInsets.all(8.0),
-                color: Colors.grey[300],
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  title: const Text(
-                    "Other Places",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  selectedTileColor: Colors.green[300],
-                  selected: isFilterOthers,
-                  onTap: () => setState(() {
-                    if (!isFilterOthers) {
-                      selectedCategories.add("others");
-                      isFilterOthers = true;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    } else {
-                      selectedCategories.remove("others");
-                      isFilterOthers = false;
-                      //print("$selectedCategories | $isFilterMuseum");
-                    }
-                  }),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16.0),
-          ],
-        ),
-
-        Expanded(
-          child: bookmarkedPlaces.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "No places were bookmarked yet.",
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: bookmarkedPlaces.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Card(
-                        margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          leading: CircleAvatar(
-                            radius: 30.0,
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: AssetImage(
-                                bookmarkedPlaces[index].imagePath ?? ''),
-                          ),
-                          title: Text(
-                            bookmarkedPlaces[index].name ?? '',
-                            style: const TextStyle(
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Row(
-                            children: [
-                              const Icon(Icons.location_on,
-                                  size: 14.0), // Adjusting the icon
-                              const SizedBox(
-                                  width:
-                                      4.0), // Space between the icon and text
-                              Expanded(
-                                  child: Text(
-                                      bookmarkedPlaces[index].location ??
-                                          '')), // Location text
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PlaceDetail(
-                                      place: bookmarkedPlaces[index])),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-        ),
-      ],
+      ),
     );
   }
 }

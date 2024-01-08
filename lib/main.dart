@@ -3,6 +3,7 @@ import 'package:algerian_touristic_guide_app/screens/wrapper.dart';
 import 'package:algerian_touristic_guide_app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:get/get.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 // ...
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     return StreamProvider<AppUser?>.value(
       value: AuthService().user,
       initialData: null,
-      child: const MaterialApp(
+      child: const GetMaterialApp(
         debugShowCheckedModeBanner: false,
         home: Wrapper(),
       ),

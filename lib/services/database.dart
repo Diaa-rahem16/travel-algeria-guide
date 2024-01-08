@@ -189,4 +189,15 @@ class DatabaseService {
 
     await batch.commit();
   }
+
+  Future<void> addNewPlace(Place place) {
+    return placeCollection.add({
+      'placeID': place.placeID,
+      'name': place.name,
+      'state': place.state,
+      'location': place.location,
+      'imagePath': place.imagePath,
+      'description': place.description,
+    });
+  }
 }
